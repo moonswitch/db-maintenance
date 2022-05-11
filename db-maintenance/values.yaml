@@ -1,0 +1,24 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  pullPolicy: IfNotPresent
+  tag: ""
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 0.5G
+  limits:
+    cpu: 500m
+    memory: 1G
+
+schedule: "0 3 * * 0"
+failedJobsHistoryLimit: 1
+successfulJobsHistoryLimit: 1
+suspend: false
+
+pgSecrets: []
+pgSecretRef: ""
+scriptConfigMapNameOverride: ""
+scripts: {}

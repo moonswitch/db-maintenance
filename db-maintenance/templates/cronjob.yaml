@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "db-maintenance.fullname" . }}
+  labels: &labels
+    {{- include "db-maintenance.labels" . | nindent 4 }}
+spec:
+  suspend: {{ .Values.suspend }}
+  schedule: {{ .Values.schedule }}
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels: *labels
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: {{ .Chart.Name }}
+            image: "tktktk:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- if .Values.pgSecretRef }}
+            envFrom:
+            - secretRef:
+                name: {{ .Values.pgSecretRef }}
+            {{- end }}
+            {{- if .Values.pgSecrets }}
+            env:
+              {{- toYaml .Values.pgSecrets | nindent 14 }}
+            {{- end }}
+            volumeMounts:
+            - name: scripts
+              mountPath: /var/opt/psql/scripts.d
+            resources:
+              {{- toYaml .Values.resources | nindent 14 }}
+          volumes:
+          - name: scripts
+            configMap:
+              name: {{ include "db-maintenance.scriptsConfigMapName" . }}
