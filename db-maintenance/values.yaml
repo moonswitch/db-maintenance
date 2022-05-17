@@ -13,12 +13,20 @@ resources:
     cpu: 500m
     memory: 1G
 
+# Follows standard crontab format
 schedule: "0 3 * * 0"
 failedJobsHistoryLimit: 1
 successfulJobsHistoryLimit: 1
 suspend: false
 
+# A list of secrets in standard Env format (name/value/valueFrom)
+# used to connect to the DB
 pgSecrets: []
+# Alternatively, a reference to an env secret can be provided and the
+# entire secret will be used
 pgSecretRef: ""
+# Override the auto-generated name of the pg scripts ConfigMag
 scriptConfigMapNameOverride: ""
+# Key-value map of file names and their contents. Should be `.sql` files, and
+# contents should be valid psql scripts
 scripts: {}
