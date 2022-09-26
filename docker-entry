@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if ! psql -c "SELECT version()"; then
+  echo "Failed to connect to database"
+  exit 1
+fi
+
+echo "Starting DB maintenance"
+
+for f in /var/opt/psql/scripts.d/*.sql; do
+  echo "Running $f"
+  psql -a -f "$f"
+done
+
+echo "DB maintenance complete"
